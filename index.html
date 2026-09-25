@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wordle vs AI</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Wordle vs AI</h1>
+    <p class="subtitle">On-device word battles · powered by QVAC</p>
+    <nav id="mode-tabs" aria-label="Game mode">
+      <button data-mode="classic" class="active">Classic</button>
+      <button data-mode="versus">Vs AI</button>
+      <button data-mode="tutor">Tutor</button>
+    </nav>
+  </header>
+
+  <main>
+    <section id="settings" aria-label="Game settings"></section>
+
+    <div id="game-area">
+      <section id="player-panel">
+        <h2 id="player-title">You</h2>
+        <div id="board" class="board" aria-label="Your guesses"></div>
+        <div id="keyboard" aria-label="On-screen keyboard"></div>
+      </section>
+
+      <section id="bot-panel" class="hidden">
+        <h2><span id="bot-title">AI Bot</span> <span id="ai-status-versus" class="ai-status" role="status"></span></h2>
+        <div id="bot-board" class="board" aria-label="Bot guesses"></div>
+        <p id="bot-status" class="bot-status" role="status"></p>
+        <p id="banter" class="banter"></p>
+        <section class="ai-log-wrap" aria-label="AI activity log">
+          <h3>AI log</h3>
+          <div class="ai-log-actions">
+            <button id="ai-log-refresh-versus" type="button">Refresh</button>
+          </div>
+          <div id="ai-log-list-versus" class="ai-log-list"></div>
+        </section>
+      </section>
+
+      <aside id="tutor-panel" class="hidden" aria-label="Tutor chat">
+        <h2>AI Tutor <span id="ai-status-tutor" class="ai-status" role="status"></span></h2>
+        <div id="tutor-log" class="tutor-log"></div>
+        <form id="tutor-form">
+          <input id="tutor-input" type="text" maxlength="200"
+                 placeholder="Ask about strategy…" autocomplete="off">
+          <button type="submit">Ask</button>
+        </form>
+        <section class="ai-log-wrap" aria-label="AI activity log">
+          <h3>AI log</h3>
+          <div class="ai-log-actions">
+            <button id="ai-log-refresh-tutor" type="button">Refresh</button>
+          </div>
+          <div id="ai-log-list-tutor" class="ai-log-list"></div>
+        </section>
+      </aside>
+    </div>
+
+    <div id="toast" class="hidden" role="status"></div>
+
+    <div id="loading-overlay" class="hidden" role="dialog" aria-modal="true" aria-label="Loading">
+      <div class="modal-card">
+        <h2>Loading…</h2>
+        <p id="loading-message">Please wait — loading the AI model…</p>
+        <div class="spinner" aria-hidden="true"></div>
+      </div>
+    </div>
+
+    <div id="result-modal" class="hidden" role="dialog" aria-modal="true">
+      <div class="modal-card">
+        <h2 id="result-title"></h2>
+        <p id="result-detail"></p>
+        <div id="stats"></div>
+        <button id="result-close">Play again</button>
+      </div>
+    </div>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

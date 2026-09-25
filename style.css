@@ -1,0 +1,589 @@
+/* Wordle vs AI — clean, responsive game UI. */
+
+:root {
+  --bg: #121213;
+  --panel: #1a1a1c;
+  --text: #f8f8f8;
+  --muted: #9a9aa0;
+  --border: #3a3a3c;
+  --green: #538d4e;
+  --yellow: #b59f3b;
+  --gray: #3a3a3c;
+  --key-bg: #818384;
+  --accent: #6aaa64;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+header {
+  text-align: center;
+  padding: 12px 16px 0;
+  width: 100%;
+  max-width: 720px;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 1.6rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.subtitle {
+  margin: 4px 0 10px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+#mode-tabs {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+#mode-tabs button {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+#mode-tabs button.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #0d0d0d;
+  font-weight: 700;
+}
+
+main {
+  width: 100%;
+  max-width: 900px;
+  padding: 8px 16px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#settings {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 8px 0 4px;
+  font-size: 0.9rem;
+  color: var(--muted);
+  min-height: 2rem;
+}
+
+#settings label {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+#settings select {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 0.9rem;
+}
+
+#game-area {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+#player-panel,
+#bot-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#game-area h2 {
+  font-size: 1rem;
+  margin: 4px 0 8px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.board {
+  display: grid;
+  grid-template-rows: repeat(6, 1fr);
+  gap: 6px;
+}
+
+.board .row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+.tile {
+  width: 58px;
+  height: 58px;
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.tile.filled {
+  border-color: #565758;
+}
+
+.tile.green {
+  background: var(--green);
+  border-color: var(--green);
+}
+
+.tile.yellow {
+  background: var(--yellow);
+  border-color: var(--yellow);
+}
+
+.tile.gray {
+  background: var(--gray);
+  border-color: var(--gray);
+}
+
+.tile.pop {
+  animation: pop 0.12s ease-in-out;
+}
+
+@keyframes pop {
+  50% { transform: scale(1.08); }
+}
+
+.tile.shake-row {
+  animation: shake 0.4s;
+}
+
+@keyframes shake {
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+#keyboard {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+}
+
+.kb-row {
+  display: flex;
+  gap: 5px;
+}
+
+.key {
+  min-width: 40px;
+  height: 54px;
+  padding: 0 8px;
+  background: var(--key-bg);
+  color: var(--text);
+  border: 0;
+  border-radius: 5px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+.key.wide {
+  min-width: 62px;
+  font-size: 0.75rem;
+}
+
+.key.green { background: var(--green); }
+.key.yellow { background: var(--yellow); }
+.key.gray { background: var(--gray); }
+
+.banter {
+  margin-top: 12px;
+  max-width: 280px;
+  text-align: center;
+  font-style: italic;
+  color: var(--muted);
+  font-size: 0.9rem;
+  min-height: 1.2em;
+}
+
+/* Tutor panel — sits beside the board, like the bot panel in versus mode. */
+
+#tutor-panel {
+  width: 320px;
+  max-width: 100%;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+body[data-mode="tutor"] #tutor-panel {
+  width: 400px;
+}
+
+.tutor-log {
+  height: 340px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+body[data-mode="tutor"] .tutor-log {
+  height: 42vh;
+  min-height: 320px;
+}
+
+.tutor-msg {
+  padding: 8px 10px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  max-width: 92%;
+}
+
+.tutor-msg.tutor {
+  background: #243024;
+  align-self: flex-start;
+}
+
+.tutor-msg.player {
+  background: #2a2a3e;
+  align-self: flex-end;
+}
+
+.tutor-msg.thinking {
+  color: var(--muted);
+  font-style: italic;
+}
+
+#tutor-form {
+  display: flex;
+  gap: 6px;
+}
+
+#tutor-input {
+  flex: 1;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  padding: 8px 10px;
+  font-size: 0.9rem;
+}
+
+#tutor-form button {
+  background: var(--accent);
+  border: 0;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* AI model status pills, bot status line, AI activity log */
+
+.ai-status {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  background: var(--border);
+  color: var(--muted);
+  border-radius: 999px;
+  padding: 2px 10px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.ai-status.loading {
+  background: #4a3f1e;
+  color: #f0d060;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+.ai-status.ready {
+  background: #24402a;
+  color: #8fd694;
+}
+
+.ai-status.bad {
+  background: #472b2b;
+  color: #e08a8a;
+}
+
+@keyframes pulse {
+  50% { opacity: 0.55; }
+}
+
+.bot-status {
+  margin: 10px 0 0;
+  min-height: 1.2em;
+  font-size: 0.85rem;
+  font-style: italic;
+  color: var(--muted);
+}
+
+.ai-log-wrap {
+  margin-top: 12px;
+  width: 100%;
+  max-width: 420px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+body[data-mode="tutor"] .ai-log-wrap {
+  max-width: 720px;
+}
+
+.ai-log-wrap h3 {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text);
+}
+
+.ai-log-actions {
+  margin: 6px 0;
+}
+
+.ai-log-actions button {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.ai-log-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.ai-log-empty {
+  font-style: italic;
+}
+
+.ai-log-entry {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ai-log-head {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.ai-log-kind {
+  font-weight: 700;
+  color: var(--text);
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+}
+
+.ai-log-time,
+.ai-log-ms {
+  font-size: 0.7rem;
+}
+
+.ai-log-input,
+.ai-log-response {
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.ai-log-response {
+  color: var(--text);
+}
+
+.ai-log-thinking summary {
+  cursor: pointer;
+  font-size: 0.75rem;
+}
+
+.ai-log-thinking pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin: 4px 0 0;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+/* Toast + modal + loading overlay */
+
+#toast {
+  position: fixed;
+  top: 72px;
+  background: var(--text);
+  color: #111;
+  font-weight: 700;
+  padding: 10px 18px;
+  border-radius: 8px;
+  z-index: 20;
+}
+
+#result-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 30;
+}
+
+.modal-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px 28px;
+  max-width: 380px;
+  width: 90%;
+  text-align: center;
+}
+
+.modal-card h2 {
+  margin: 0 0 8px;
+}
+
+.modal-card button {
+  margin-top: 16px;
+  background: var(--accent);
+  border: 0;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+#loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 40;
+}
+
+#loading-overlay .modal-card p {
+  color: var(--muted);
+  margin: 8px 0 0;
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 4px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  margin: 16px auto 4px;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+#stats {
+  margin-top: 12px;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+#stats .dist {
+  display: flex;
+  gap: 4px;
+  align-items: flex-end;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+#stats .dist-bar {
+  background: var(--key-bg);
+  width: 22px;
+  border-radius: 3px 3px 0 0;
+  font-size: 0.7rem;
+  color: #111;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 2px;
+  min-height: 18px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+@media (max-width: 640px) {
+  .tile {
+    width: 46px;
+    height: 46px;
+    font-size: 1.4rem;
+  }
+
+  .key {
+    min-width: 30px;
+    height: 48px;
+  }
+
+  #tutor-panel {
+    width: 100%;
+  }
+}
